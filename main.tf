@@ -23,33 +23,33 @@ resource "random_string" "deployment_id" {
 }
 
 data "oci_identity_compartment" "requestor" {
-  provider = "oci.requestor"
+  provider = oci.requestor
   id = var.requestor_compartment_ocid
 }
 
 data "oci_identity_compartment" "acceptor" {
-  provider = "oci.acceptor"
+  provider = oci.acceptor
   id = var.acceptor_compartment_ocid
 }
 
 data "oci_identity_groups" "requestor_administrators" {
-  provider = "oci.requestor"
+  provider = oci.requestor
   name = "Administrators"
   compartment_id = var.requestor_root_compartment_ocid
 }
 
 data "oci_identity_groups" "acceptor_administrators" {
-  provider = "oci.acceptor"
+  provider = oci.acceptor
   name = "Administrators"
   compartment_id = var.acceptor_root_compartment_ocid
 }
 
 data "oci_core_vcn" "requestor" {
-  provider = "oci.requestor"
+  provider = oci.requestor
   vcn_id = var.requestor_vnc_ocid
 }
 
 data "oci_core_vcn" "acceptor" {
-  provider = "oci.acceptor"
+  provider = oci.acceptor
   vcn_id = var.acceptor_vnc_ocid
 }

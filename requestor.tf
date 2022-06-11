@@ -12,7 +12,7 @@ resource "oci_identity_policy" "requestor_policy" {
 }
 
 resource "oci_core_local_peering_gateway" "requestor" {
-  provider       = "oci.requestor"
+  provider       = oci.requestor
   compartment_id = var.requestor_compartment_ocid
   vcn_id         = var.requestor_vnc_ocid
   display_name   = "requestor-${random_string.deployment_id.result}"
@@ -24,7 +24,7 @@ resource "oci_core_local_peering_gateway" "requestor" {
 }
 
 resource "oci_core_route_table" "requestor" {
-  provider       = "oci.requestor"
+  provider       = oci.requestor
   compartment_id = var.requestor_compartment_ocid
   vcn_id         = var.requestor_vnc_ocid
   display_name   = "Route Table to acceptor"

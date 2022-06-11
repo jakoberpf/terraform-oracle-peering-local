@@ -1,5 +1,5 @@
 resource "oci_identity_policy" "acceptor_policy" {
-  provider       = "oci.acceptor"
+  provider       = oci.acceptor
   compartment_id = var.acceptor_root_compartment_ocid
   name           = "Acceptor-Policy-${random_string.deployment_id.result}"
   description    = "Acceptor Policy"
@@ -12,7 +12,7 @@ resource "oci_identity_policy" "acceptor_policy" {
 }
 
 resource "oci_core_local_peering_gateway" "acceptor" {
-  provider       = "oci.acceptor"
+  provider       = oci.acceptor
   compartment_id = var.acceptor_compartment_ocid
   vcn_id         = var.acceptor_vnc_ocid
   display_name   = "acceptor-${random_string.deployment_id.result}"
@@ -22,7 +22,7 @@ resource "oci_core_local_peering_gateway" "acceptor" {
 }
 
 resource "oci_core_route_table" "acceptor" {
-  provider       = "oci.acceptor"
+  provider       = oci.acceptor
   compartment_id = var.acceptor_compartment_ocid
   vcn_id         = var.acceptor_vnc_ocid
   display_name   = "Route Table to requestor"
