@@ -43,3 +43,13 @@ data "oci_identity_groups" "acceptor_administrators" {
   name = "Administrators"
   compartment_id = var.acceptor_root_compartment_ocid
 }
+
+data "oci_core_vcn" "requestor" {
+  provider = "oci.requestor"
+  vcn_id = var.requestor_vnc_ocid
+}
+
+data "oci_core_vcn" "acceptor" {
+  provider = "oci.acceptor"
+  vcn_id = var.acceptor_vnc_ocid
+}
