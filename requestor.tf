@@ -1,5 +1,5 @@
 resource "oci_identity_policy" "requestor_policy" {
-  provider       =  oci.requestor
+  provider       = oci.requestor
   compartment_id = var.requestor_root_compartment_ocid
   name           = "Requestor-Policy-${random_string.deployment_id.result}"
   description    = "Requestor Policy"

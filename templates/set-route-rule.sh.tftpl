@@ -28,12 +28,12 @@ for (( i = 0; i < $${#currentRulesBashArrayDestination[@]}; ++i )); do
   echo "        network-entity-id: $currentRulesBashArrayNetworkEntityId[i]"
 done
 
-value="1.0.0.0/0"
+value="${cidr-block}"
 if [[ ! " $${currentRulesBashArrayDestination[*]} " =~ " \"$value\" " ]]; then
   echo "[debug] Current rules do not contain $value. Adding rule for $value."
   currentRulesBashArrayDestination+=( \"$value\" )
   currentRulesBashArrayDestinationType+=( \"CIDR_BLOCK\" )
-  currentRulesBashArrayNetworkEntityId+=( \"ocid1.internetgateway.oc1.eu-frankfurt-1....\" )
+  currentRulesBashArrayNetworkEntityId+=( \"${peering-ocid}\" )
 else
   echo "[debug] Current rules do already contain $value."
 fi
@@ -41,19 +41,26 @@ fi
 function toJSON() {
   printf "[\n"
   length=$${#currentRulesBashArrayDestination[@]}
-  for (( j=0; j<length; j++ ));
+  for (( j=0; j<length-1; j++ ));
   do
     printf "  {\n"
-    printf '    "destination": %s,\n' "$currentRulesBashArrayDestination[$j]"
-    printf '    "destination-type": %s,\n' "$currentRulesBashArrayDestinationType[$j]"
-    printf '    "network-entity-id": %s,\n' "$currentRulesBashArrayNetworkEntityId[$j]"
+    printf '    "destination": %s,\n' "$${currentRulesBashArrayDestination[$j]}"
+    printf '    "destination-type": %s,\n' "$${currentRulesBashArrayDestinationType[$j]}"
+    printf '    "network-entity-id": %s\n' "$${currentRulesBashArrayNetworkEntityId[$j]}"
     printf "  },\n"
   done
+  printf "  {\n"
+  printf '    "destination": %s,\n' "$${currentRulesBashArrayDestination[$length - 1]}"
+  printf '    "destination-type": %s,\n' "$${currentRulesBashArrayDestinationType[$length - 1]}"
+  printf '    "network-entity-id": %s\n' "$${currentRulesBashArrayNetworkEntityId[$length - 1]}"
+  printf "  }\n"
   printf "]\n"
 }
 
 toJSON
 
 updatedRulesJsonArray=$(toJSON | tr '\n' ' ')
+updatedRulesJsonArrayWith=$(echo \'$updatedRulesJsonArray\')
 
-oci network route-table update --profile=${profile} --compartment-id ${compartment-id} --vcn-id ${vcn-id} --rt-id ${rt-id} --route-rules \'$updatedRulesJsonArray\'
+updateCMD="oci network route-table update --profile=${profile} --rt-id ${rt-id} --route-rules $updatedRulesJsonArrayWith --force"
+eval "$updateCMD"
