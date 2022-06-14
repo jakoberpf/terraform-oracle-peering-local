@@ -2,16 +2,12 @@ terraform {
   required_providers {
     oci = {
       source = "hashicorp/oci"
+      configuration_aliases = [
+        oci.requestor,
+        oci.acceptor
+      ]
     }
   }
-}
-
-provider "oci" {
-  alias            = "requestor"
-}
-
-provider "oci" {
-  alias            = "acceptor"
 }
 
 resource "random_string" "deployment_id" {

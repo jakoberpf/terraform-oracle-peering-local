@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
 currentRules=$(oci network route-table get --profile=${profile} --rt-id ${rt-id} | jq '.data."route-rules"')
-currentRules=$(cat <<EOF
-[
-  {
-    "cidr-block": null,
-    "description": null,
-    "destination": "0.0.0.0/0",
-    "destination-type": "CIDR_BLOCK",
-    "network-entity-id": "ocid1.internetgateway.oc1.eu-frankfurt-1...."
-  }
-]
-EOF
-)
+# currentRules=$(cat <<EOF
+# [
+#   {
+#     "cidr-block": null,
+#     "description": null,
+#     "destination": "0.0.0.0/0",
+#     "destination-type": "CIDR_BLOCK",
+#     "network-entity-id": "ocid1.internetgateway.oc1.eu-frankfurt-1...."
+#   }
+# ]
+# EOF
+# )
 
 currentRulesJsonArryDestination=$( echo "$currentRules" | jq '.[] | .destination' | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g' )
 currentRulesJsonArryDestinationType=$( echo "$currentRules" | jq '.[] | ."destination-type"' | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g' )
@@ -22,37 +22,38 @@ currentRulesBashArrayDestination=( $currentRulesJsonArryDestination )
 currentRulesBashArrayDestinationType=( $currentRulesJsonArryDestinationType )
 currentRulesBashArrayNetworkEntityId=( $currentRulesJsonArryNetworkEntityId )
 
-for (( i = 0; i < ${#currentRulesBashArrayDestination[@]}; ++i )); do
-  echo "[debug] destination: ${currentRulesBashArrayDestination[i]}"
-  echo "        destination-type: ${currentRulesBashArrayDestinationType[i]}"
-  echo "        network-entity-id: ${currentRulesBashArrayNetworkEntityId[i]}"
+for (( i = 0; i < $${#currentRulesBashArrayDestination[@]}; ++i )); do
+  echo "[debug] destination: $currentRulesBashArrayDestination[i]"
+  echo "        destination-type: $currentRulesBashArrayDestinationType[i]"
+  echo "        network-entity-id: $currentRulesBashArrayNetworkEntityId[i]"
 done
 
 value="1.0.0.0/0"
-if [[ ! " ${currentRulesBashArrayDestination[*]} " =~ " \"${value}\" " ]]; then
-  echo "[debug] Current rules do not contain ${value}. Adding rule for ${value}."
+if [[ ! " $${currentRulesBashArrayDestination[*]} " =~ " \"$value\" " ]]; then
+  echo "[debug] Current rules do not contain $value. Adding rule for $value."
   currentRulesBashArrayDestination+=( \"$value\" )
   currentRulesBashArrayDestinationType+=( \"CIDR_BLOCK\" )
   currentRulesBashArrayNetworkEntityId+=( \"ocid1.internetgateway.oc1.eu-frankfurt-1....\" )
 else
-  echo "[debug] Current rules do already contain ${value}."
+  echo "[debug] Current rules do already contain $value."
 fi
 
 function toJSON() {
   printf "[\n"
-  length=${#currentRulesBashArrayDestination[@]}
+  length=$${#currentRulesBashArrayDestination[@]}
   for (( j=0; j<length; j++ ));
   do
     printf "  {\n"
-    printf '    "destination": %s,\n' "${currentRulesBashArrayDestination[$j]}"
-    printf '    "destination-type": %s,\n' "${currentRulesBashArrayDestinationType[$j]}"
-    printf '    "network-entity-id": %s,\n' "${currentRulesBashArrayNetworkEntityId[$j]}"
+    printf '    "destination": %s,\n' "$currentRulesBashArrayDestination[$j]"
+    printf '    "destination-type": %s,\n' "$currentRulesBashArrayDestinationType[$j]"
+    printf '    "network-entity-id": %s,\n' "$currentRulesBashArrayNetworkEntityId[$j]"
     printf "  },\n"
   done
   printf "]\n"
 }
 
-updatedRulesJsonArray=$(toJSON | tr '\n' ' ')
-echo $updatedRulesJsonArray
+toJSON
 
-oci network route-table update --profile=${profile} --compartment-id ${compartment-id} --vcn-id ${vcn-id} --rt-id ${rt-id} --route-rules '[{\"cidrBlock\":\"$VCN_CIDR\",\"networkEntityId\":\"zzz\"}]'
+updatedRulesJsonArray=$(toJSON | tr '\n' ' ')
+
+oci network route-table update --profile=${profile} --compartment-id ${compartment-id} --vcn-id ${vcn-id} --rt-id ${rt-id} --route-rules \'$updatedRulesJsonArray\'
