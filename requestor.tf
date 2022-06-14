@@ -23,34 +23,3 @@ resource "oci_core_local_peering_gateway" "requestor" {
     oci_core_local_peering_gateway.acceptor
   ]
 }
-
-# resource "oci_core_route_table" "requestor" {
-#   provider       = oci.requestor
-#   compartment_id = var.requestor_compartment_ocid
-#   vcn_id         = var.requestor_vnc_ocid
-#   display_name   = "Route Table to acceptor ${var.acceptor_id}"
-#   route_rules {
-#     destination = data.oci_core_vcn.acceptor.cidr_blocks[0]
-#     network_entity_id = oci_core_local_peering_gateway.requestor.id
-#   }
-#   depends_on = [
-#     oci_identity_policy.requestor_policy
-#   ]
-# }
-
-# resource "null_resource" "requestor" {
-#   provisioner "local-exec" {
-#     command = "echo oci network route-table create --compartment-id xxx --vcn-id yyy --route-rules '[{\"cidrBlock\":\"$VCN_CIDR\",\"networkEntityId\":\"zzz\"}]' $FOO $BAR $BAZ >> env_vars.txt"
-
-#     environment = {
-#       VCN_CIDR = data.oci_core_vcn.acceptor.cidr_blocks[0]
-#       FOO = "bar"
-#       BAR = 1
-#       BAZ = "true"
-#     }
-#   }
-
-#   depends_on = [
-#     data.oci_core_vcn.acceptor
-#   ]
-# }

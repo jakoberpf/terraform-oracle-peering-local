@@ -21,18 +21,3 @@ resource "oci_core_local_peering_gateway" "acceptor" {
     oci_identity_policy.acceptor_policy
   ]
 }
-
-# resource "oci_core_route_table" "acceptor" {
-#   provider       = oci.acceptor
-#   compartment_id = var.acceptor_compartment_ocid
-#   vcn_id         = var.acceptor_vnc_ocid
-#   display_name   = "Route Table to requestor ${var.requestor_id}"
-#   route_rules {
-#     destination = data.oci_core_vcn.requestor.cidr_blocks[0]
-#     network_entity_id = oci_core_local_peering_gateway.acceptor.id
-#   }
-#   depends_on = [
-#     oci_identity_policy.acceptor_policy,
-#     oci_core_local_peering_gateway.acceptor
-#   ]
-# } oci network route-table list --compartment-id  --vcn-id
