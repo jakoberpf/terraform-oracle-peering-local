@@ -1,4 +1,4 @@
-# Oracle Local Peering
+# Oracle Local Peering Module
 
 [Terraform Registry](https://registry.terraform.io/modules/jakoberpf/peering-local/oracle/latest)
 
