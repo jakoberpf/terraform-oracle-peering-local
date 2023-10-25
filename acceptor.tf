@@ -6,8 +6,8 @@ resource "oci_identity_policy" "acceptor_policy" {
   statements = [
     "Define tenancy Requestor as ${var.requestor_root_compartment_ocid}",
     "Define group RequestorGroup as ${data.oci_identity_groups.requestor_administrators.groups[0].id}",
-    "Admit group RequestorGroup of tenancy Requestor to manage local-peering-to in compartment Zelos",
-    "Admit group RequestorGroup of tenancy Requestor to associate local-peering-gateways in tenancy Requestor with local-peering-gateways in compartment Zelos"
+    "Admit group RequestorGroup of tenancy Requestor to manage local-peering-to in compartment ${data.oci_identity_compartment.acceptor.name}",
+    "Admit group RequestorGroup of tenancy Requestor to associate local-peering-gateways in tenancy Requestor with local-peering-gateways in compartment ${data.oci_identity_compartment.acceptor.name}"
   ]
 }
 

@@ -6,10 +6,6 @@ variable "requestor_compartment_ocid" {
   type = string
 }
 
-variable "requestor_compartment_name" {
-  type = string
-}
-
 variable "requestor_root_compartment_ocid" {
   type = string
 }
@@ -27,10 +23,6 @@ variable "acceptor_id" {
 }
 
 variable "acceptor_compartment_ocid" {
-  type = string
-}
-
-variable "acceptor_compartment_name" {
   type = string
 }
 
